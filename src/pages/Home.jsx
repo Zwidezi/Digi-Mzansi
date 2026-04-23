@@ -106,37 +106,37 @@ const Home = () => {
       </section>
 
       {/* Action Grid */}
-      <section className="px-4 grid grid-cols-2 gap-4">
+      <section className="px-6 grid grid-cols-2 gap-6">
         {actions.map((item) => (
           <motion.button
             key={item.label}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate(item.path)}
-            className="card-dark p-6 flex flex-col items-start gap-4 border-white/5"
+            className="card-dark p-6 flex flex-col items-start gap-4 border-white/5 min-h-[140px]"
           >
-            <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${item.color}`}>
-              <item.icon className="w-5 h-5" />
+            <div className={`w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center ${item.color}`}>
+              <item.icon className="w-6 h-6" />
             </div>
             <div className="text-left">
               <p className="font-black text-xs text-white uppercase tracking-wider">{item.label}</p>
-              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest">{item.sub}</p>
+              <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest mt-1">{item.sub}</p>
             </div>
           </motion.button>
         ))}
       </section>
 
       {/* Main CTA Button - Slide to Alert Style */}
-      <section className="px-4 fixed bottom-8 left-0 right-0 max-w-[430px] mx-auto z-50">
+      <section className="px-6 pb-12">
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/payments')}
           className="w-full py-6 btn-glow flex items-center justify-center gap-4 text-sm"
         >
-          <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-            <ArrowUpRight className="text-white w-5 h-5" />
+          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <ArrowUpRight className="text-white w-6 h-6" />
           </div>
-          <span>Confirm Payment Activity</span>
+          <span>Verify Live Activity</span>
           <ChevronRight className="w-5 h-5 opacity-50" />
         </motion.button>
       </section>

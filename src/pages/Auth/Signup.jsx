@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { updateProfile } from 'firebase/auth';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +19,10 @@ const Signup = () => {
     try {
       setError('');
       setLoading(true);
-      await signup(email, password);
+      const userCredential = await signup(email, password);
+      await updateProfile(userCredential.user, {
+        displayName: fullName
+      });
       navigate('/registration');
     } catch (err) {
       setError('Registration failed. Please check your details.');

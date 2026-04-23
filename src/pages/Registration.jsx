@@ -13,17 +13,56 @@ import {
   Globe
 } from 'lucide-react';
 
+import { db } from '../firebase/config';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+
 const Registration = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const checkProfile = async () => {
+      const docSnap = await getDoc(doc(db, 'businessProfiles', user.uid));
+      if (docSnap.exists()) {
+        navigate('/');
+      }
+    };
+    checkProfile();
+  }, [user]);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     businessName: '',
-    ownerName: '',
+    ownerName: user?.displayName || '',
     location: '',
     type: 'Spaza Shop'
   });
 
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      await setDoc(doc(db, 'businessProfiles', user.uid), {
+        ...formData,
+        userId: user.uid,
+        trustScore: 450,
+        createdAt: new Date().toISOString(),
+        verified: true
+      });
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-10 pb-10">
@@ -174,9 +213,11 @@ const Registration = () => {
               </div>
 
               <button 
+                onClick={handleSubmit}
+                disabled={loading || !formData.location}
                 className="btn-primary-elite w-full py-5 flex items-center justify-center gap-3 shadow-glow-primary"
               >
-                Generate ID <FileCheck className="w-5 h-5" />
+                {loading ? 'Generating...' : 'Generate ID'} <FileCheck className="w-5 h-5" />
               </button>
             </motion.div>
           )}

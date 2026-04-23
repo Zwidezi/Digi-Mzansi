@@ -14,14 +14,16 @@ import Signup from './pages/Auth/Signup';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
-  if (loading) return null; // Or a loading spinner
-  
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-  
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" />;
   return <Layout>{children}</Layout>;
+};
+
+const PublicRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (user) return <Navigate to="/" />;
+  return children;
 };
 
 const App = () => {
@@ -30,8 +32,8 @@ const App = () => {
       <AuthProvider>
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
           {/* Protected Routes */}
           <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />

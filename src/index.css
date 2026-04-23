@@ -1,0 +1,89 @@
+:root {
+  /* True Dark Elite Palette */
+  --bg-deep: 222 47% 4%; /* Near Black */
+  --card-dark: 222 47% 7%; /* Deep Gray */
+  --card-border: 222 47% 12%;
+  
+  --primary: 18 100% 50%; /* High-Intensity Orange */
+  --primary-glow: 18 100% 50% / 0.4;
+  
+  --success: 142 70% 45%; /* Safety Green */
+  --danger: 0 84% 44%; /* Emergency Red */
+  
+  --text-main: 0 0% 100%;
+  --text-muted: 215 20% 65%;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: hsl(var(--bg-deep));
+  color: hsl(var(--text-main));
+  overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* High-Contrast Cards */
+.card-dark {
+  background: hsl(var(--card-dark));
+  border: 1px solid hsl(var(--card-border));
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Tactile Glow Button (Vigilance Style) */
+.btn-glow {
+  background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary-deep, 18 100% 40%)) 100%);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 
+    0 0 20px hsla(var(--primary), 0.3),
+    inset 0 2px 4px rgba(255,255,255,0.2);
+  border-radius: 1.25rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glow:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 10px hsla(var(--primary), 0.5);
+}
+
+/* Status Bars */
+.status-bar {
+  background: hsl(var(--success));
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+/* Mobile Wrapper */
+.mobile-viewport {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: hsl(var(--bg-deep));
+  position: relative;
+  border-left: 1px solid hsl(var(--card-border));
+  border-right: 1px solid hsl(var(--card-border));
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--card-border));
+  border-radius: 10px;
+}

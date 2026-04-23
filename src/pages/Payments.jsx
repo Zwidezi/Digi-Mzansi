@@ -34,6 +34,8 @@ const Payments = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showSaleModal, setShowSaleModal] = useState(false);
+  const [showScanModal, setShowScanModal] = useState(false);
+  const [showSendModal, setShowSendModal] = useState(false);
 
   useEffect(() => {
     if (location.state?.openSaleModal) {
@@ -42,13 +44,28 @@ const Payments = () => {
   }, [location]);
   const [balance, setBalance] = useState(0);
   
-  // New Transaction State
+  // Transaction States
   const [newTx, setNewTx] = useState({
     title: '',
     amount: '',
     type: 'in', // 'in' or 'out'
     method: 'Quick Sale'
   });
+  const [sendTx, setSendTx] = useState({
+    recipient: '',
+    amount: '',
+    title: 'Sent Funds',
+    type: 'out',
+    method: 'Wallet Transfer'
+  });
+  const [scanTx, setScanTx] = useState({
+    merchantId: '',
+    amount: '',
+    title: 'Store Payment',
+    type: 'out',
+    method: 'QR Scan'
+  });
+  
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
@@ -94,6 +111,46 @@ const Payments = () => {
       setNewTx({ title: '', amount: '', type: 'in', method: 'Quick Sale' });
     } catch (err) {
       console.error("Error recording transaction", err);
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleSendTx = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    try {
+      setAdding(true);
+      await addDoc(collection(db, 'transactions'), {
+        ...sendTx,
+        userId: user.uid,
+        amount: parseFloat(sendTx.amount),
+        createdAt: serverTimestamp()
+      });
+      setShowSendModal(false);
+      setSendTx({ recipient: '', amount: '', title: 'Sent Funds', type: 'out', method: 'Wallet Transfer' });
+    } catch (err) {
+      console.error("Error sending funds", err);
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleScanTx = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    try {
+      setAdding(true);
+      await addDoc(collection(db, 'transactions'), {
+        ...scanTx,
+        userId: user.uid,
+        amount: parseFloat(scanTx.amount),
+        createdAt: serverTimestamp()
+      });
+      setShowScanModal(false);
+      setScanTx({ merchantId: '', amount: '', title: 'Store Payment', type: 'out', method: 'QR Scan' });
+    } catch (err) {
+      console.error("Error scanning payment", err);
     } finally {
       setAdding(false);
     }
@@ -157,18 +214,26 @@ const Payments = () => {
           </div>
           <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Record</span>
         </motion.button>
-        <button className="flex flex-col items-center gap-3 opacity-50 cursor-not-allowed">
+        <motion.button 
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setShowScanModal(true)}
+          className="flex flex-col items-center gap-3"
+        >
           <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center">
             <QrCode className="w-6 h-6 text-white" />
           </div>
           <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Scan</span>
-        </button>
-        <button className="flex flex-col items-center gap-3 opacity-50 cursor-not-allowed">
+        </motion.button>
+        <motion.button 
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setShowSendModal(true)}
+          className="flex flex-col items-center gap-3"
+        >
           <div className="w-16 h-16 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center">
             <ArrowUpRight className="w-6 h-6 text-white" />
           </div>
           <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Send</span>
-        </button>
+        </motion.button>
       </div>
 
       {/* Transactions Feed */}
@@ -291,6 +356,160 @@ const Payments = () => {
                     <>
                       <Zap className="w-5 h-5" />
                       <span>Process Transaction</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scan Modal */}
+      <AnimatePresence>
+        {showScanModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-end"
+            onClick={() => setShowScanModal(false)}
+          >
+            <motion.div 
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              className="w-full bg-[#0A0D14] rounded-t-[2.5rem] p-10 space-y-8 border-t border-white/10"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-black text-white">Scan to Pay</h3>
+                <button onClick={() => setShowScanModal(false)}>
+                  <X className="w-6 h-6 text-white/20" />
+                </button>
+              </div>
+
+              {/* Fake QR Scanner Box */}
+              <div className="w-full aspect-square bg-white/5 rounded-3xl border-2 border-dashed border-white/20 flex flex-col items-center justify-center relative overflow-hidden">
+                 <motion.div 
+                   animate={{ y: [0, 200, 0] }}
+                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                   className="absolute w-full h-1 bg-primary/50 shadow-[0_0_20px_rgba(255,100,0,1)] top-0"
+                 />
+                 <QrCode className="w-16 h-16 text-white/20 mb-4" />
+                 <p className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center px-8">Point camera at Mzansi Biz QR Code</p>
+              </div>
+
+              <form onSubmit={handleScanTx} className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Merchant ID</label>
+                    <input 
+                      required
+                      type="text" 
+                      className="w-full px-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
+                      placeholder="e.g. SPX-123"
+                      value={scanTx.merchantId}
+                      onChange={e => setScanTx({...scanTx, merchantId: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Amount (R)</label>
+                    <input 
+                      required
+                      type="number" 
+                      step="0.01"
+                      className="w-full px-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
+                      placeholder="0.00"
+                      value={scanTx.amount}
+                      onChange={e => setScanTx({...scanTx, amount: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={adding}
+                  className="w-full py-6 btn-glow flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {adding ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                    <>
+                      <Zap className="w-5 h-5" />
+                      <span>Confirm Payment</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Send Modal */}
+      <AnimatePresence>
+        {showSendModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-xl flex items-end"
+            onClick={() => setShowSendModal(false)}
+          >
+            <motion.div 
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              className="w-full bg-[#0A0D14] rounded-t-[2.5rem] p-10 space-y-8 border-t border-white/10"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-black text-white">Send Funds</h3>
+                <button onClick={() => setShowSendModal(false)}>
+                  <X className="w-6 h-6 text-white/20" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSendTx} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Recipient Number or ID</label>
+                  <div className="relative">
+                    <Smartphone className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
+                    <input 
+                      required
+                      type="text" 
+                      className="w-full pl-16 pr-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
+                      placeholder="082 123 4567"
+                      value={sendTx.recipient}
+                      onChange={e => setSendTx({...sendTx, recipient: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Amount (R)</label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
+                    <input 
+                      required
+                      type="number" 
+                      step="0.01"
+                      className="w-full pl-16 pr-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
+                      placeholder="0.00"
+                      value={sendTx.amount}
+                      onChange={e => setSendTx({...sendTx, amount: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={adding}
+                  className="w-full py-6 btn-glow flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {adding ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                    <>
+                      <ArrowUpRight className="w-5 h-5" />
+                      <span>Send Instantly</span>
                     </>
                   )}
                 </button>

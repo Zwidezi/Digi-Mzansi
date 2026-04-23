@@ -27,7 +27,13 @@ const PremiumHeader = ({ title = "Mzansi Biz" }) => {
           <h1 className="font-black text-lg tracking-tight text-white uppercase cursor-pointer">{title}</h1>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end mr-1 hidden xs:flex">
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none mb-1">Owner</p>
+            <p className="text-xs font-bold text-white leading-none">
+              {user?.displayName || 'Merchant'}
+            </p>
+          </div>
           <motion.button 
             whileTap={{ scale: 0.9 }}
             onClick={() => navigate('/registration')}

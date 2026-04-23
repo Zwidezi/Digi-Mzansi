@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
 
 const PremiumHeader = ({ title = "Mzansi Biz" }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {

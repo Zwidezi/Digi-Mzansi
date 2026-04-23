@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion } from 'framer-motion';
-import { User, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { User, Mail, Lock, AlertCircle, Loader2, Store, ChevronRight } from 'lucide-react';
 import { updateProfile } from 'firebase/auth';
 
 const Signup = () => {
@@ -32,31 +32,40 @@ const Signup = () => {
   };
 
   return (
-    <div className="mobile-viewport bg-white flex flex-col items-center px-10 py-16 min-h-screen">
+    <div className="mobile-viewport bg-[#05070A] flex flex-col items-center px-10 py-16 min-h-screen relative overflow-hidden">
+      {/* Background Glows */}
+      <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-64 h-64 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm space-y-10"
+        className="w-full max-w-sm space-y-10 relative z-10"
       >
-        <h2 className="text-4xl font-extrabold text-[#1A1C1E] text-center tracking-tight">Create Account</h2>
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto border border-white/5 shadow-2xl">
+            <Store className="text-primary w-8 h-8" />
+          </div>
+          <h2 className="text-4xl font-black text-white tracking-tighter uppercase">New <span className="text-primary">Merchant</span></h2>
+          <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.2em]">Start your digital journey</p>
+        </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 text-xs font-bold border border-red-100">
+          <div className="bg-red-500/10 text-red-500 p-5 rounded-2xl flex items-center gap-4 text-[10px] font-black uppercase border border-red-500/20">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Full Name Field */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-[#1A1C1E] ml-1">Full Name</label>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Merchant Name</label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <User className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
               <input 
                 type="text" 
                 required
-                className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 outline-none focus:border-[#0066FF] transition-all font-medium text-gray-700 bg-white"
+                className="w-full pl-16 pr-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
                 placeholder="Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -64,32 +73,30 @@ const Signup = () => {
             </div>
           </div>
 
-          {/* Email Field */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-[#1A1C1E] ml-1">Email</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Email Access</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
               <input 
                 type="email" 
                 required
-                className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 outline-none focus:border-[#0066FF] transition-all font-medium text-gray-700 bg-white"
-                placeholder="Email"
+                className="w-full pl-16 pr-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
+                placeholder="merchant@mzansibiz.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
 
-          {/* Password Field */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-[#1A1C1E] ml-1">Password</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Secure Key</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
               <input 
                 type="password" 
                 required
-                className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 outline-none focus:border-[#0066FF] transition-all font-medium text-gray-700 bg-white"
-                placeholder="Password"
+                className="w-full pl-16 pr-6 py-5 rounded-2xl bg-white/5 border border-white/5 text-white outline-none focus:border-primary/50 transition-all font-bold text-sm"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -99,38 +106,29 @@ const Signup = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-[#0066FF] py-4 rounded-xl text-white font-black text-lg shadow-lg shadow-blue-200 active:scale-95 transition-all flex items-center justify-center mt-2"
+            className="w-full py-6 btn-glow flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
           >
-            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Sign Up'}
+            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+              <>
+                <span className="text-sm">Create Merchant ID</span>
+                <ChevronRight className="w-4 h-4 opacity-50" />
+              </>
+            )}
           </button>
         </form>
 
         <div className="relative py-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-100"></div>
+            <div className="w-full border-t border-white/5"></div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-4 text-gray-400 font-bold">Or</span>
+          <div className="relative flex justify-center text-[10px] uppercase tracking-widest">
+            <span className="bg-[#05070A] px-4 text-white/20 font-black">Secure Onboarding</span>
           </div>
         </div>
 
-        {/* Social Buttons */}
-        <div className="space-y-4">
-          <button className="w-full py-4 border border-gray-200 rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-gray-50">
-            <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
-            <span className="font-bold text-gray-700 text-sm">Sign up with Google</span>
-          </button>
-          <button className="w-full py-4 bg-black border border-black rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
-            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.702z"/>
-            </svg>
-            <span className="font-bold text-white text-sm">Sign up with Apple</span>
-          </button>
-        </div>
-
-        <p className="text-center text-sm font-medium text-gray-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-[#0066FF] font-black hover:underline">
+        <p className="text-center text-[10px] font-black uppercase tracking-widest text-white/20">
+          Already Registered?{' '}
+          <Link to="/login" className="text-primary hover:underline ml-1">
             Log In
           </Link>
         </p>

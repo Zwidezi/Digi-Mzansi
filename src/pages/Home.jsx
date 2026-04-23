@@ -78,7 +78,10 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-2 gap-3 mt-8">
-            <button className="py-4 btn-glow text-xs shadow-[0_10px_20px_-5px_rgba(255,100,0,0.3)]">
+            <button 
+              onClick={() => navigate('/payments', { state: { openSaleModal: true } })}
+              className="py-4 btn-glow text-xs shadow-[0_10px_20px_-5px_rgba(255,100,0,0.3)]"
+            >
               Record Sale
             </button>
             <button className="py-4 bg-white/5 text-white/60 rounded-2xl text-xs font-black uppercase border border-white/5">

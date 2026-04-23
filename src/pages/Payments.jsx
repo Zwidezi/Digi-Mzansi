@@ -25,13 +25,21 @@ import {
   orderBy
 } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 import PremiumHeader from '../components/shared/PremiumHeader';
 
 const Payments = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showSaleModal, setShowSaleModal] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.openSaleModal) {
+      setShowSaleModal(true);
+    }
+  }, [location]);
   const [balance, setBalance] = useState(0);
   
   // New Transaction State
